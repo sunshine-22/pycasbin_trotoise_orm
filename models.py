@@ -6,29 +6,31 @@ from tortoise import fields
 
 class Contact(Model):
     name = fields.CharField(max_length=255)
-    phone_number = fields.CharField(max_length=20)
+    phone = fields.CharField(max_length=20)
     def __str__(self):
         return self.name
+    
+class CasbinRule(Model):
+    id: fields.IntField = fields.IntField(pk=True)
+    ptype: fields.CharField = fields.CharField(max_length=255)
+    v0: fields.CharField = fields.CharField(max_length=255, null=True)
+    v1: fields.CharField = fields.CharField(max_length=255, null=True)
+    v2: fields.CharField = fields.CharField(max_length=255, null=True)
+    v3: fields.CharField = fields.CharField(max_length=255, null=True)
+    v4: fields.CharField = fields.CharField(max_length=255, null=True)
+    v5: fields.CharField = fields.CharField(max_length=255, null=True)
 
+    class Meta:
+        table: str = "casbin_rule"
 
+    def __str__(self):
+        arr = [self.ptype]
+        for v in (self.v0, self.v1, self.v2, self.v3, self.v4, self.v5):
+            if v is None:
+                break
+            arr.append(v)
 
+        return ", ".join(arr)
 
-class usertable(Model):
-    id = fields.UUIDField(pk=True)
-    name = fields.CharField(max_length=100)
-
-class Country(Model):
-    id = fields.UUIDField(pk=True)
-    country_name = fields.CharField(max_length=100)
-    created_by = fields.ForeignKeyField(
-        model_name="models.usertable",null=True,on_delete=fields.SET_NULL
-    )
-class State(Model):
-    id = fields.UUIDField(pk=True)
-    state_name = fields.CharField(max_length=100)
-    country = fields.ForeignKeyField(
-        model_name="models.Country",null=True,on_delete=fields.SET_NULL
-    )
-    created_by = fields.ForeignKeyField(
-        model_name="models.usertable",null=True,on_delete=fields.SET_NULL
-    )
+    def __repr__(self):
+        return '<CasbinRule {}: "{}">'.format(self.id, str(self))
